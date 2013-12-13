@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<project name="Test" default="build" basedir=".">
+  
+  <property
+    name="sources.dir"
+    value="."
+  />
+  <property
+    name="scala.home"
+    value="/usr/share/java"
+  />
+  <property
+    name="build.dir"
+    value="./build"
+  />
+  <property
+    name="jarout"
+    value="tree.jar"
+  />
+  <target name="init">
+    <property
+      name="scala-library.jar"
+      value="${scala.home}/scala-library.jar"
+    />
+    <path id="build.classpath">
+      <pathelement location="${scala-library.jar}"   />
+      <pathelement location="."   />
+      <pathelement location="${build.dir}"   />
+    </path>
+    <taskdef resource="scala/tools/ant/antlib.xml">
+      <classpath>
+        <pathelement location="${scala.home}/scala-compiler.jar"   />
+        <pathelement location="${scala-library.jar}"   />
+      </classpath>
+    </taskdef>
+  </target>
+  <target name="build" depends="compile">
+    <jar destfile="${jarout}" excludes="*.jar" >
+      <manifest>
+        <attribute name="Main-Class" value="Driver"/>
+      </manifest>
+      <fileset dir="${build.dir}" />
+      <zipfileset src="${scala-library.jar}"/>
+    </jar>
+  </target>
+  <target name="compile" depends="init">
+    <mkdir dir="${build.dir}"   />
+    <scalac srcdir="${sources.dir}"
+      deprecation="yes"
+      destdir="${build.dir}"
+      classpathref="build.classpath">
+      <include name="*.scala"   />
+    </scalac>
+  </target>
+  <target name="clean">
+    <delete>
+      <fileset dir = "${build.dir}" includes = "*.class"/>
+    </delete>
+    <delete file = "${jarout}"/>
+  </target>
+</project>
