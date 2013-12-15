@@ -5,12 +5,24 @@ abstract class Node {
     def getStr(level:Int):String
 }
 
+// branches have an attribute. Scala puts the constructor
+// right in the class definition, and attribute will become
+// a member.
+
 case class Branch(val attribute:Symbol) extends Node {
-    var children: List[Tuple2[Symbol,Node]] = List() // type inference in action?
     
-    def add(v: Symbol, x: Node) {
-        children = (v,x)::children
+    // The children of each branch: a list of (symbol,node) tuples.
+    // Note that we don't need to specify the type in the constructor List(),
+    // Scala will infer it.
+    
+    var children: List[Tuple2[Symbol,Node]] = List()
+    
+    // add (s,n) to the head of the list
+    def add(s: Symbol, n: Node) {
+        children = (s,n)::children
     }
+    
+    // recursive method for printing out a tree
     
     override def getStr(level:Int):String = {
         def nodestr(x: Tuple2[Symbol,Node]):String = {
@@ -21,7 +33,13 @@ case class Branch(val attribute:Symbol) extends Node {
     }
 }
 
+// leaves have a label
+
 case class Leaf(val label:Symbol) extends Node {
+    
+    // recursive method for printing out a tree (well, this one's not
+    // recursive because it's for the Leaf)
+    
     override def getStr(level:Int) :String = {
         " "*level+"Leaf "+label
     }
